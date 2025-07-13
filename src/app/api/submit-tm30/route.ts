@@ -141,6 +141,7 @@ function getEmailTranslations(language: string) {
       guestRoomKey: 'Room Key Code:',
       guestRegDetails: 'Registration Details:',
       guestSubmissionId: 'Submission ID:',
+      no_of_guests: 'Number of Guests:',
       guestCheckinDate: 'Check-in Date:',
       guestCheckoutDate: 'Check-out Date:',
       guestRegTime: 'Registration Time:',
@@ -159,6 +160,7 @@ function getEmailTranslations(language: string) {
       guestRoomKey: 'รหัสกุญแจห้อง:',
       guestRegDetails: 'รายละเอียดการลงทะเบียน:',
       guestSubmissionId: 'รหัสการส่ง:',
+      no_of_guests: 'จำนวนผู้เข้าพัก:',
       guestCheckinDate: 'วันที่เช็คอิน:',
       guestCheckoutDate: 'วันที่เช็คเอาท์:',
       guestRegTime: 'เวลาที่ลงทะเบียน:',
@@ -177,6 +179,7 @@ function getEmailTranslations(language: string) {
       guestRoomKey: '房间钥匙代码:',
       guestRegDetails: '登记详情:',
       guestSubmissionId: '提交ID:',
+      no_of_guests: '入住人数:',
       guestCheckinDate: '入住日期:',
       guestCheckoutDate: '退房日期:',
       guestRegTime: '登记时间:',
@@ -195,6 +198,7 @@ function getEmailTranslations(language: string) {
       guestRoomKey: 'Код ключа от комнаты:',
       guestRegDetails: 'Детали регистрации:',
       guestSubmissionId: 'ID подачи:',
+      no_of_guests: 'Количество гостей:',
       guestCheckinDate: 'Дата заезда:',
       guestCheckoutDate: 'Дата выезда:',
       guestRegTime: 'Время регистрации:',
@@ -698,7 +702,7 @@ export async function POST(req: NextRequest) {
             <h4>${t.guestRegDetails}</h4>
             <ul>
               <li>${t.guestSubmissionId} ${submissionId}${submissionIds.length > 1 ? ` (+ ${submissionIds.slice(1).join(', ')})` : ''}</li>
-              <li>Number of Guests: ${numberOfGuests}</li>
+              <li>${t.no_of_guests} ${numberOfGuests}</li>
               <li>${t.guestCheckinDate} ${checkinDate}</li>
               <li>${t.guestCheckoutDate} ${checkoutDate}</li>
             </ul>

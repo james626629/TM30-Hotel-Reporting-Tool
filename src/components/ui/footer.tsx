@@ -19,9 +19,9 @@ export function Footer() {
             <div className="flex items-center justify-center gap-1 sm:gap-2">
               <Phone className="h-4 w-4 text-blue-600" />
               <span className="text-xs sm:text-sm font-medium">{t('footer.phone')}:</span>
-              <a href="tel:+66123456789" // need to change link 
+              <a href="tel:+66 826356266" 
                className="text-xs sm:text-sm text-blue-600 hover:underline">
-                +66 1-2345-6789 // need to change link
+                +66 826356266
               </a>
             </div>
 
@@ -30,12 +30,12 @@ export function Footer() {
               <MessageCircle className="h-4 w-4 text-green-600" />
               <span className="text-xs sm:text-sm font-medium">{t('footer.whatsapp')}:</span>
               <a
-                href="https://wa.me/66123456789" // need to change link
+                href="https://wa.me/+66826356266" 
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs sm:text-sm text-green-600 hover:underline"
               >
-                +66 1-2345-6789 // need to change link
+                +66 826356266
               </a>
             </div>
 
@@ -46,12 +46,12 @@ export function Footer() {
               </div>
               <span className="text-xs sm:text-sm font-medium">{t('footer.line')}:</span>
               <a
-                href="https://line.me/ti/p/@hotelhelp" // need to change link
+                href="https://line.me/ti/p/~isaraks" // need to change link
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs sm:text-sm text-green-600 hover:underline"
               >
-                @hotelhelp // need to change link
+                @อิศ (Is)The KPI Plus
               </a>
             </div>
           </div>

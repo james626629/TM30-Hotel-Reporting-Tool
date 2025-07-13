@@ -389,7 +389,10 @@ export default function TM30FormPage() {
   // For nationality popover
   const [openNationality, setOpenNationality] = React.useState(false);
   const [openNationality2, setOpenNationality2] = React.useState(false);
-  
+
+  // Place this inside your component function, before the return statement
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
 
 const resetForNextRoom = () => {
   // Resets only the data for a single room/guest registration
@@ -1177,55 +1180,59 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
               </Popover>
             </div>
 
-            {/* Check-in Date */}
-            <div>
-              <Label htmlFor="checkinDate">
-                {t('step5.checkinDate')} <span className="text-red-500">*</span>
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button id="checkinDate" variant={'outline'} className="w-full justify-start text-left font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {checkinDate ? format(checkinDate, 'dd/MM/yyyy') : <span>{t('step5.checkinDatePlaceholder')}</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 min-w-[280px]">
-                  <Calendar
-                    mode="single"
-                    selected={checkinDate}
-                    onSelect={setCheckinDate}
-                    initialFocus
-                    // REVERTED: Use the function syntax for disabling dates
-                    disabled={(date) => date < new Date()}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+           {/* Check-in Date */}
+          <div>
+            <Label htmlFor="checkinDate">
+              {t('step5.checkinDate')} <span className="text-red-500">*</span>
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button id="checkinDate" variant={'outline'} className="w-full justify-start text-left font-normal">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {checkinDate ? format(checkinDate, 'dd/MM/yyyy') : <span>{t('step5.checkinDatePlaceholder')}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 min-w-[280px]">
+                <Calendar
+                  mode="single"
+                  selected={checkinDate}
+                  onSelect={setCheckinDate}
+                  initialFocus
+                  // CHANGE 1: Disable all dates up to and including yesterday.
+                  // This makes today (the current date) selectable.
+                  disabled={(date) => date <= yesterday}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
 
-            {/* Check-out Date */}
-            <div>
-              <Label htmlFor="checkoutDate">
-                {t('step5.checkoutDate')} <span className="text-red-500">*</span>
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button id="checkoutDate" variant={'outline'} className="w-full justify-start text-left font-normal">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {checkoutDate ? format(checkoutDate, 'dd/MM/yyyy') : <span>{t('step5.checkoutDatePlaceholder')}</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 min-w-[280px]">
-                  <Calendar
-                    mode="single"
-                    selected={checkoutDate}
-                    onSelect={setCheckoutDate}
-                    initialFocus
-                    // REVERTED: Use the function syntax for disabling dates
-                    disabled={(date) => date < new Date()}
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
+          {/* Check-out Date */}
+          <div>
+            <Label htmlFor="checkoutDate">
+              {t('step5.checkoutDate')} <span className="text-red-500">*</span>
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                {/* CHANGE 2: Disable the button until a check-in date is chosen. */}
+                <Button id="checkoutDate" variant={'outline'} className="w-full justify-start text-left font-normal" disabled={!checkinDate}>
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {checkoutDate ? format(checkoutDate, 'dd/MM/yyyy') : <span>{t('step5.checkoutDatePlaceholder')}</span>}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 min-w-[280px]">
+                <Calendar
+                  mode="single"
+                  selected={checkoutDate}
+                  onSelect={setCheckoutDate}
+                  initialFocus
+                  // FIX: Ensure the function always returns a boolean.
+                  // If checkinDate exists, compare it; otherwise, return false.
+                  disabled={(date) => (checkinDate ? date <= checkinDate : false)}
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
 
 
 
@@ -1406,65 +1413,58 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
                 </Popover>
               </div>
 
-              {/* Check-in Date */}
-              <div>
-                <Label htmlFor="checkinDate2">
-                  {t('step5.checkinDate2')} <span className="text-red-500">*</span>
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="checkinDate2"
-                      variant={'outline'}
-                      className="w-full justify-start text-left font-normal"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {checkinDate2 ? format(checkinDate2, 'dd/MM/yyyy') : <span>{t('step5.checkinDatePlaceholder')}</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={checkinDate2}
-                      onSelect={setCheckinDate2}
-                      initialFocus
-                      disabled={(date) => date < new Date()}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+             {/* Check-in Date (Guest 2) */}
+            <div>
+              <Label htmlFor="checkinDate2">
+                {t('step5.checkinDate2')} <span className="text-red-500">*</span>
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button id="checkinDate2" variant={'outline'} className="w-full justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {checkinDate2 ? format(checkinDate2, 'dd/MM/yyyy') : <span>{t('step5.checkinDatePlaceholder')}</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={checkinDate2}
+                    onSelect={setCheckinDate2}
+                    initialFocus
+                    // CHANGE 1: Use the 'yesterday' constant to allow selecting today's date.
+                    disabled={(date) => date <= yesterday}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
-              {/* Check-out Date */}
-              <div>
-                <Label htmlFor="checkoutDate2">
-                  {t('step5.checkoutDate2')} <span className="text-red-500">*</span>
-                </Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      id="checkoutDate2"
-                      variant={'outline'}
-                      className="w-full justify-start text-left font-normal"
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {checkoutDate2 ? format(checkoutDate2, 'dd/MM/yyyy') : <span>{t('step5.checkoutDatePlaceholder')}</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={checkoutDate2}
-                      onSelect={setCheckoutDate2}
-                      // ADDED: Restore dropdown functionality for year/month selection
-                      captionLayout="dropdown"
-                      // ADDED: The critical prop for v9.7.0 layout
-                      navLayout="around"
-                      // CORRECT: Only allow future dates to be selected
-                      disabled={{ before: new Date() }}
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
+            {/* Check-out Date (Guest 2) */}
+            <div>
+              <Label htmlFor="checkoutDate2">
+                {t('step5.checkoutDate2')} <span className="text-red-500">*</span>
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  {/* CHANGE 2: Disable the button until a check-in date is chosen. */}
+                  <Button id="checkoutDate2" variant={'outline'} className="w-full justify-start text-left font-normal" disabled={!checkinDate2}>
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {checkoutDate2 ? format(checkoutDate2, 'dd/MM/yyyy') : <span>{t('step5.checkoutDatePlaceholder')}</span>}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0">
+                  <Calendar
+                    mode="single"
+                    selected={checkoutDate2}
+                    onSelect={setCheckoutDate2}
+                    captionLayout="dropdown"
+                    navLayout="around"
+                    initialFocus
+                    // CHANGE 3: Link to the check-in date and ensure a boolean is always returned.
+                    disabled={(date) => (checkinDate2 ? date <= checkinDate2 : false)}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
 
               {/* Phone Number */}
               <div>
