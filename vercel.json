@@ -6,7 +6,11 @@
     },
     {
       "path": "/api/migrate-room-schedule",
-      "schedule": "0 */4 * * *"
+      "schedule": "5 5 * * *"
+    },
+    {
+      "path": "/api/cleanup-room-schedule",
+      "schedule": "30 6 * * *"
     }
   ]
 }

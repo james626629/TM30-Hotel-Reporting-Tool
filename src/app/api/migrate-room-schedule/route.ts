@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
       const selectQuery = `
         SELECT hotel_id, room_number, re_enable_date
         FROM room_availability_schedule
-        WHERE re_enable_date <= NOW() AND processed = FALSE
+        WHERE re_enable_date::date <= NOW()::date AND processed = FALSE
       `;
 
       const result = await client.query(selectQuery);

@@ -108,7 +108,7 @@ async function sendEmail(to: string, subject: string, htmlContent: string, fromE
     }
 
     const { data, error } = await resend.emails.send({
-      from: fromEmail || 'TM30 Registration <james@thekpiplus.com>', // You can change this when you have a custom domain
+      from: fromEmail || 'TM30 Registration <checkin-portal@thekpiplus.com>', // You can change this when you have a custom domain
       to: [to],
       subject: subject,
       html: htmlContent,
