@@ -165,6 +165,7 @@
     "step": "步骤",
     "complete": "完成",
     "notAvailable": "暂无",
-    "willBeProvided": "稍后提供"
+    "willBeProvided": "稍后提供",
+    "fileTooLarge": "文件太大。最大尺寸为 30MB。"
   }
 }

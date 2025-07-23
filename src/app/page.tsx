@@ -386,6 +386,9 @@ export default function TM30FormPage() {
   const [passportPhotoPreview, setPassportPhotoPreview] = React.useState<string | null>(null);
   const [passportPhotoPreview2, setPassportPhotoPreview2] = React.useState<string | null>(null);
 
+  const [passportPhotoError, setPassportPhotoError] = React.useState<string | null>(null);
+  const [passportPhotoError2, setPassportPhotoError2] = React.useState<string | null>(null);
+
   // For nationality popover
   const [openNationality, setOpenNationality] = React.useState(false);
   const [openNationality2, setOpenNationality2] = React.useState(false);
@@ -431,18 +434,36 @@ const resetForNextRoom = () => {
 
   const handlePassportPhotoChange = (e: React.ChangeEvent<HTMLInputElement>, guestNumber: number) => {
     const file = e.target.files?.[0] || null;
+    const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
+
     if (guestNumber === 1) {
-      setPassportPhoto(file);
+      setPassportPhotoError(null);
       if (file) {
-        setPassportPhotoPreview(URL.createObjectURL(file));
+        if (file.size > MAX_FILE_SIZE) {
+          setPassportPhotoError(t('common.fileTooLarge'));
+          setPassportPhoto(null);
+          setPassportPhotoPreview(null);
+        } else {
+          setPassportPhoto(file);
+          setPassportPhotoPreview(URL.createObjectURL(file));
+        }
       } else {
+        setPassportPhoto(null);
         setPassportPhotoPreview(null);
       }
-    } else {
-      setPassportPhoto2(file);
+    } else { // guestNumber === 2
+      setPassportPhotoError2(null);
       if (file) {
-        setPassportPhotoPreview2(URL.createObjectURL(file));
+        if (file.size > MAX_FILE_SIZE) {
+          setPassportPhotoError2(t('common.fileTooLarge'));
+          setPassportPhoto2(null);
+          setPassportPhotoPreview2(null);
+        } else {
+          setPassportPhoto2(file);
+          setPassportPhotoPreview2(URL.createObjectURL(file));
+        }
       } else {
+        setPassportPhoto2(null);
         setPassportPhotoPreview2(null);
       }
     }
@@ -865,6 +886,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <p className="text-xs text-muted-foreground mt-2">
             {t('step3.passportPhotoHelper')}
           </p>
+          {passportPhotoError && <p className="text-sm text-red-600 mt-2">{passportPhotoError}</p>}
         </div>
         {/* --- Conditionally Render Passport Photo for Guest 2 --- */}
         {numberOfGuests === 2 && (
@@ -893,6 +915,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             <p className="text-xs text-muted-foreground mt-2">
               {t('step3.passportPhotoHelper')}
             </p>
+            {passportPhotoError2 && <p className="text-sm text-red-600 mt-2">{passportPhotoError2}</p>}
         </div>
         )}
         {/* --- END: Passport Photo Upload --- */}
@@ -903,7 +926,11 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           <ArrowLeft className="mr-2 h-4 w-4" />
           {t('step3.backButton')}
         </Button>
-        <Button onClick={nextStep} className="w-full sm:w-auto">
+        <Button
+          onClick={nextStep}
+          className="w-full sm:w-auto"
+          disabled={!passportPhoto || (numberOfGuests === 2 && !passportPhoto2)}
+        >
           <span className="hidden sm:inline">{t('step3.continueButton')}</span>
           <span className="sm:hidden">{t('step3.continueButtonMobile')}</span>
           <ArrowRight className="ml-2 h-4 w-4" />
@@ -1486,7 +1513,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !firstName || !passportNumber || !gender || !nationality || !birthDate || !checkinDate || !checkoutDate || !passportPhoto || (numberOfGuests === 2 && (!firstName2 || !passportNumber2 || !gender2 || !nationality2 || !birthDate2 || !checkinDate2 || !checkoutDate2 || !passportPhoto2))}
+              disabled={isSubmitting || !firstName || !lastName || !passportNumber || !gender || !nationality || !birthDate || !checkinDate || !checkoutDate || (numberOfGuests === 2 && (!firstName2 || !lastName2 || !passportNumber2 || !gender2 || !nationality2 || !birthDate2 || !checkinDate2 || !checkoutDate2))}
               className="w-full sm:w-auto"
             >
               {isSubmitting ? t('step5.submittingButton') : t('step5.submitButton')}
@@ -1494,14 +1521,14 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
           </div>
 
           {/* Client-side validation message for guest 1 */}
-          {(!firstName || !passportNumber || !gender || !nationality || !birthDate || !checkinDate || !checkoutDate || !passportPhoto) && (
+          {(!firstName || !lastName || !passportNumber || !gender || !nationality || !birthDate || !checkinDate || !checkoutDate) && (
             <p className="mt-4 text-sm text-orange-600">
               {t('step5.requiredFieldsGuest1')}
             </p>
           )}
 
           {/* Client-side validation message for guest 2 */}
-          {numberOfGuests === 2 && (!firstName2 || !passportNumber2 || !gender2 || !nationality2 || !birthDate2 || !checkinDate2 || !checkoutDate2 || !passportPhoto2) && (
+          {numberOfGuests === 2 && (!firstName2 || !lastName2 || !passportNumber2 || !gender2 || !nationality2 || !birthDate2 || !checkinDate2 || !checkoutDate2) && (
             <p className="mt-4 text-sm text-orange-600">
               {t('step5.requiredFieldsGuest2')}
             </p>

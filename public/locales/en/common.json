@@ -164,6 +164,7 @@
     "step": "Step",
     "complete": "Complete",
     "notAvailable": "N/A",
-    "willBeProvided": "Will be provided"
+    "willBeProvided": "Will be provided",
+    "fileTooLarge": "File is too large. Max size is 30MB."
   }
 }
