@@ -432,37 +432,48 @@ const resetForNextRoom = () => {
 
 
 
-  const handlePassportPhotoChange = (e: React.ChangeEvent<HTMLInputElement>, guestNumber: number) => {
+  const handlePassportPhotoChange = async (e: React.ChangeEvent<HTMLInputElement>, guestNumber: number) => {
     const file = e.target.files?.[0] || null;
-    const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
-
-    if (guestNumber === 1) {
-      setPassportPhotoError(null);
-      if (file) {
-        if (file.size > MAX_FILE_SIZE) {
-          setPassportPhotoError(t('common.fileTooLarge'));
-          setPassportPhoto(null);
-          setPassportPhotoPreview(null);
-        } else {
-          setPassportPhoto(file);
-          setPassportPhotoPreview(URL.createObjectURL(file));
-        }
-      } else {
+    if (!file) {
+      if (guestNumber === 1) {
         setPassportPhoto(null);
         setPassportPhotoPreview(null);
-      }
-    } else { // guestNumber === 2
-      setPassportPhotoError2(null);
-      if (file) {
-        if (file.size > MAX_FILE_SIZE) {
-          setPassportPhotoError2(t('common.fileTooLarge'));
-          setPassportPhoto2(null);
-          setPassportPhotoPreview2(null);
-        } else {
-          setPassportPhoto2(file);
-          setPassportPhotoPreview2(URL.createObjectURL(file));
-        }
       } else {
+        setPassportPhoto2(null);
+        setPassportPhotoPreview2(null);
+      }
+      return;
+    }
+
+    const imageCompressionModule = await import('browser-image-compression');
+    const imageCompression = imageCompressionModule.default;
+
+    const options = {
+      maxSizeMB: 2, // Max file size in MB
+      maxWidthOrHeight: 1920, // Max width or height
+      useWebWorker: true,
+    };
+
+    try {
+      const compressedFile = await imageCompression(file, options);
+
+      if (guestNumber === 1) {
+        setPassportPhotoError(null);
+        setPassportPhoto(compressedFile);
+        setPassportPhotoPreview(URL.createObjectURL(compressedFile));
+      } else { // guestNumber === 2
+        setPassportPhotoError2(null);
+        setPassportPhoto2(compressedFile);
+        setPassportPhotoPreview2(URL.createObjectURL(compressedFile));
+      }
+    } catch (error) {
+      const errorMessage = t('common.imageCompressionError');
+      if (guestNumber === 1) {
+        setPassportPhotoError(errorMessage);
+        setPassportPhoto(null);
+        setPassportPhotoPreview(null);
+      } else {
+        setPassportPhotoError2(errorMessage);
         setPassportPhoto2(null);
         setPassportPhotoPreview2(null);
       }
@@ -582,6 +593,10 @@ const resetForNextRoom = () => {
   };
 
   // Form submission
+  const sanitizeFilename = (filename: string) => {
+    return filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+  };
+
   // Replace the old handleSubmit function with this one
 const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
@@ -613,7 +628,17 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
   if (checkoutDate) formData.append('checkoutDate', format(checkoutDate, 'dd/MM/yyyy'));
   formData.append('phoneNumber', phoneNumber);
   if (passportPhoto) {
-    formData.append('passportPhoto', passportPhoto); // Append the file
+    if (typeof passportPhoto.name !== 'string') {
+      setSubmitError('Invalid passport photo file name. Please choose a different file.');
+      setIsSubmitting(false);
+      return;
+    }
+    // FIX: Create a unique filename for guest 1 to prevent iPhone camera conflicts
+    const uniqueFilename1 = `guest1_${sanitizeFilename(passportPhoto.name)}`;
+    const sanitizedFile = new File([passportPhoto], uniqueFilename1, {
+      type: passportPhoto.type,
+    });
+    formData.append('passportPhoto', sanitizedFile);
   }
 
   // Guest 2 data (only if 2 guests selected)
@@ -629,7 +654,17 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     if (checkoutDate2) formData.append('checkoutDate2', format(checkoutDate2, 'dd/MM/yyyy'));
     formData.append('phoneNumber2', phoneNumber2);
     if (passportPhoto2) {
-      formData.append('passportPhoto2', passportPhoto2); // Append the second file
+      if (typeof passportPhoto2.name !== 'string') {
+        setSubmitError('Invalid passport photo file name for Guest 2. Please choose a different file.');
+        setIsSubmitting(false);
+        return;
+      }
+      // FIX: Create a unique filename for guest 2 to prevent iPhone camera conflicts
+      const uniqueFilename2 = `guest2_${sanitizeFilename(passportPhoto2.name)}`;
+      const sanitizedFile2 = new File([passportPhoto2], uniqueFilename2, {
+        type: passportPhoto2.type,
+      });
+      formData.append('passportPhoto2', sanitizedFile2);
     }
   }
 

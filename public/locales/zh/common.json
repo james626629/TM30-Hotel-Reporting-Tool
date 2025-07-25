@@ -166,6 +166,7 @@
     "complete": "完成",
     "notAvailable": "暂无",
     "willBeProvided": "稍后提供",
-    "fileTooLarge": "文件太大。最大尺寸为 30MB。"
+    "fileTooLarge": "文件太大。最大尺寸为 30MB。",
+    "imageCompressionError": "图像压缩失败。请重试或选择较小的文件。"
   }
 }

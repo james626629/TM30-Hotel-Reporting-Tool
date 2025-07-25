@@ -165,6 +165,7 @@
     "complete": "Complete",
     "notAvailable": "N/A",
     "willBeProvided": "Will be provided",
-    "fileTooLarge": "File is too large. Max size is 30MB."
+    "fileTooLarge": "File is too large. Max size is 30MB.",
+    "imageCompressionError": "Failed to compress image. Please try again or choose a smaller file."
   }
 }
